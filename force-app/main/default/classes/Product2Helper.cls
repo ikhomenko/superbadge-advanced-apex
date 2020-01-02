@@ -7,8 +7,8 @@ public class Product2Helper {
     static List<CollaborationGroup> COLLABORATION_GROUP = [
         SELECT Id
         FROM CollaborationGroup
-        WHERE Name = 'group name'
-        OR Name = :('TEST'+'group name')
+        WHERE Name = :Constants.INVENTORY_ANNOUNCEMENTS
+        OR Name = :('TEST'+Constants.INVENTORY_ANNOUNCEMENTS)
         LIMIT 1
     ];
 
