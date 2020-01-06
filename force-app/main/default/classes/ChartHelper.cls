@@ -1,10 +1,14 @@
-public with sharing class ChartHelper {
+public without sharing class ChartHelper {
 
-    public static List<chartData> GetInventory(){
-        List<chartData> cht = new List<chartData>();
+    @AuraEnabled
+    public static List<ChartData> GetInventory(){
+        List<ChartData> cht = new List<ChartData>();
         //ToDo: Perform a calculation that aggregates active Products that have a positive Quantity_Remaining__c
         //  And return a list of chartData
         //  Where the name is the Product Family and the Qty is the sum of the Quantity_Remaining__c
+        for (AggregateResult ar : [SELECT Family, SUM(Quantity_Remaining__c) quantity FROM Product2 WHERE Quantity_Remaining__c > 0 GROUP BY Family]) {
+            cht.add(new ChartData((String)ar.get('Family'), (Decimal)ar.get('quantity')));
+        }
         return cht;
     }
 

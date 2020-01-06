@@ -22,9 +22,16 @@ public class Product2Extension {
         addRows();
     }
 
+    //need this method to pass  third step's test
+    public List<SelectOption> getFamilyOptions(){
+        return this.familyOptions;
+    }
+
     public void AddRows(){
         for ( Integer i=0; i< Constants.DEFAULT_ROWS; i++ ){
-            productsToInsert.add( new ProductWrapper() );
+            productsToInsert.add( new ProductWrapper(
+                    //TODO:  set values from page
+            ) );
         }
     }
 
@@ -35,21 +42,70 @@ public class Product2Extension {
     public PageReference Save(){
         Savepoint sp = Database.setSavepoint();
         try {
-            //insert productsToInsert;
+
+            Integer howManyInserted = insertProducts(productsToInsert);
 
             //If successful clear the list and display an informational message
-            apexPages.addMessage(new ApexPages.message(ApexPages.Severity.INFO,productsToInsert.size()+' Inserted'));
+            apexPages.addMessage(new ApexPages.message(ApexPages.Severity.INFO,howManyInserted+' Inserted'));
             productsToInsert.clear();   //Do not remove
             addRows();  //Do not remove
         } catch (Exception e){
-            //apexPages.addMessage(new ApexPages.message('Something went wrong'));
+            apexPages.addMessage(new ApexPages.message(ApexPages.Severity.ERROR, e.getMessage() +' ' + Constants.ERROR_MESSAGE));
             Database.rollback(sp);
         }
         return null;
     }
 
+    private static Integer insertProducts(List<ProductWrapper> products) {
+        List<SObject> productsAndPricebookEntries = new List<SObject>();
+
+        for (ProductWrapper pw : products) {
+            if (pw.hasAnyEmptyValues()) {
+                continue;
+            }
+            Integer randomNumber = Integer.valueof((Math.random() * 10000));
+            Product2 productReference = new Product2(extId__c='externalKey'+String.valueOf(randomNumber));
+            PricebookEntry pbe = new PricebookEntry(
+                    Product2 = productReference,
+                    Pricebook2Id = Constants.STANDARD_PRICEBOOK_ID,
+                    UnitPrice = pw.pricebookEntryRecord.UnitPrice
+            );
+            Product2 product = new Product2(
+                    extId__c='externalKey'+String.valueOf(randomNumber),
+                    Name = pw.productRecord.Name,
+                    Family = pw.productRecord.Family,
+                    IsActive = pw.productRecord.isActive,
+                    Initial_Inventory__c = pw.productRecord.Initial_Inventory__c
+            );
+            System.debug(String.valueOf(randomNumber));
+            productsAndPricebookEntries.addAll(new List<SObject>{product, pbe});
+        }
+        System.debug(productsAndPricebookEntries);
+        if (!productsAndPricebookEntries.isEmpty()) {
+            Database.insert(productsAndPricebookEntries);
+        }
+        return productsAndPricebookEntries.size()/2;
+    }
+
     public class ProductWrapper {
         public Product2 productRecord {get;set;}
         public PriceBookEntry pricebookEntryRecord {get;set;}
+
+        public ProductWrapper() {
+            productRecord = new Product2();
+            pricebookEntryRecord =  new PricebookEntry();
+        }
+
+        public Boolean hasAnyEmptyValues() {
+            Boolean  result = false;
+            if (String.isBlank(productRecord.Name) || String.isBlank(productRecord.Family) ||
+                !productRecord.isActive || productRecord.Initial_Inventory__c == null || productRecord.Initial_Inventory__c == 0) {
+                result = true;
+            }
+            if (pricebookEntryRecord.UnitPrice == null || pricebookEntryRecord.UnitPrice == 0) {
+                result =  true;
+            }
+            return result;
+        }
     }
 }
