@@ -29,9 +29,7 @@ public class Product2Extension {
 
     public void AddRows(){
         for ( Integer i=0; i< Constants.DEFAULT_ROWS; i++ ){
-            productsToInsert.add( new ProductWrapper(
-                    //TODO:  set values from page
-            ) );
+            productsToInsert.add( new ProductWrapper() );
         }
     }
 
@@ -50,6 +48,7 @@ public class Product2Extension {
             productsToInsert.clear();   //Do not remove
             addRows();  //Do not remove
         } catch (Exception e){
+            System.debug(e.getMessage());
             apexPages.addMessage(new ApexPages.message(ApexPages.Severity.ERROR, e.getMessage() +' ' + Constants.ERROR_MESSAGE));
             Database.rollback(sp);
         }
@@ -58,7 +57,8 @@ public class Product2Extension {
 
     private static Integer insertProducts(List<ProductWrapper> products) {
         List<SObject> productsAndPricebookEntries = new List<SObject>();
-
+        List<Product2> product2s = new List<Product2>();
+        List<PricebookEntry> pbes = new List<PricebookEntry>();
         for (ProductWrapper pw : products) {
             if (pw.hasAnyEmptyValues()) {
                 continue;
@@ -67,9 +67,10 @@ public class Product2Extension {
             Product2 productReference = new Product2(extId__c='externalKey'+String.valueOf(randomNumber));
             PricebookEntry pbe = new PricebookEntry(
                     Product2 = productReference,
-                    Pricebook2Id = Constants.STANDARD_PRICEBOOK_ID,
+                    Pricebook2Id =  Test.isRunningTest() ? Test.getStandardPricebookId() : Constants.STANDARD_PRICEBOOK_ID,
                     UnitPrice = pw.pricebookEntryRecord.UnitPrice
             );
+            pbes.add(pbe);
             Product2 product = new Product2(
                     extId__c='externalKey'+String.valueOf(randomNumber),
                     Name = pw.productRecord.Name,
@@ -77,10 +78,10 @@ public class Product2Extension {
                     IsActive = pw.productRecord.isActive,
                     Initial_Inventory__c = pw.productRecord.Initial_Inventory__c
             );
-            System.debug(String.valueOf(randomNumber));
-            productsAndPricebookEntries.addAll(new List<SObject>{product, pbe});
+            product2s.add(product);
         }
-        System.debug(productsAndPricebookEntries);
+        productsAndPricebookEntries.addAll(product2s);
+        productsAndPricebookEntries.addAll(pbes);
         if (!productsAndPricebookEntries.isEmpty()) {
             Database.insert(productsAndPricebookEntries);
         }

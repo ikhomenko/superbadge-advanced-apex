@@ -55,7 +55,7 @@ public with sharing class TestDataFactory {
         for (Product2 product : prods) {
             pricebookEntries.add(new PricebookEntry(
                 Product2Id = product.Id,
-                Pricebook2Id  = Constants.STANDARD_PRICEBOOK_ID,
+                Pricebook2Id  = Test.getStandardPricebookId(),
                 IsActive = true,
                 UnitPrice = 100
             ));
@@ -109,7 +109,7 @@ public with sharing class TestDataFactory {
         for (Integer i = 0; i < cnt; i++) {
             orders.add(new Order(
                 AccountId = accts.size() <= i ? accts.get(0).Id : accts.get(i).Id,
-                Pricebook2Id = Constants.STANDARD_PRICEBOOK_ID,
+                Pricebook2Id = Test.getStandardPricebookId(),
                 Status = 'Draft',
                 EffectiveDate = Date.today()
             ));
@@ -152,24 +152,24 @@ public with sharing class TestDataFactory {
         List<Product2>  products= TestDataFactory.ConstructProducts(cnt);
         insert products;
 
-        List<PriceBookEntry> entries = TestDataFactory.ConstructPricebookEntries(products);
-        insert entries;
+        List<PriceBookEntry> pricebookEntries = TestDataFactory.ConstructPricebookEntries(products);
+        insert pricebookEntries;
 
-        List<Account> accts = TestDataFactory.ConstructAccounts(cnt);
-        insert accts;
+        List<Account> accounts = TestDataFactory.ConstructAccounts(cnt);
+        insert accounts;
 
-        List<Contact> contacts = TestDataFactory.ConstructContacts(cnt,accts);
+        List<Contact> contacts = TestDataFactory.ConstructContacts(cnt,accounts);
         insert contacts;
 
-        List<Order> orders = TestDataFactory.ConstructOrders( cnt,  accts);
+        List<Order> orders = TestDataFactory.ConstructOrders(cnt, accounts);
         insert orders;
 
-        List<OrderItem> items = TestDataFactory.ConstructOrderItems(cnt, entries, orders);
+        List<OrderItem> items = TestDataFactory.ConstructOrderItems(cnt, pricebookEntries, orders);
         insert items;
 
     }
 
-    public void VerifyQuantityOrdered(Product2 originalProduct, Product2 updatedProduct, Integer qtyOrdered) {
+    public static void VerifyQuantityOrdered(Product2 originalProduct, Product2 updatedProduct, Integer qtyOrdered) {
         System.assertEquals( updatedProduct.Quantity_Ordered__c, originalProduct.Quantity_Ordered__c + qtyOrdered, 'Quantity ordered caltucalation fail');
     }
 
