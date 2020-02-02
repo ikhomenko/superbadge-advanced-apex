@@ -8,10 +8,18 @@
                 <apex:commandButton value="Cancel" action="{!cancel}" />
             </apex:pageBlockButtons>
             <apex:pageBlockSection >
-                <apex:inputField value="{!orderRecord.AccountId}" required="true" />
-                <apex:inputField value="{!orderRecord.Name}" />
-                <apex:inputField value="{!orderRecord.EffectiveDate}" />
-                <apex:inputField value="{!orderRecord.Status}" />
+                <apex:inputField value="{!orderRecord.AccountId}" required="true">
+                    <apex:actionSupport event="onchange" action="{!onFieldChange}" reRender="pageMessages, summary" />
+                </apex:inputField>
+                <apex:inputField value="{!orderRecord.Name}" >
+                    <apex:actionSupport event="onchange" action="{!onFieldChange}" reRender="pageMessages, summary" />
+                </apex:inputField>
+                <apex:inputField value="{!orderRecord.EffectiveDate}" >
+                    <apex:actionSupport event="onchange" action="{!onFieldChange}" reRender="pageMessages, summary" />
+                </apex:inputField>
+                <apex:inputField value="{!orderRecord.Status}">
+                    <apex:actionSupport event="onchange" action="{!onFieldChange}" reRender="pageMessages, summary" />
+                </apex:inputField>
             </apex:pageBlockSection>
         </apex:pageBlock>
         <apex:actionRegion >
@@ -64,15 +72,15 @@
             </apex:pageBlock>
             <center>
                 <apex:panelGrid id="pagination" columns="9" >
-                <apex:commandButton value="<< First" disabled="{!hasPrevious==false}" action="{!first}" reRender="pageMessages, pagination, orderItemTable" />
-                <span>&nbsp;&nbsp;</span>
-                <apex:commandButton value="< Previous" disabled="{!hasPrevious==false}" action="{!previous}" reRender="pageMessages, pagination, orderItemTable" />
-                <span>&nbsp;&nbsp;</span>
-                <span>Page {!pageNumber} of {!totalPages}</span>
-                <span>&nbsp;&nbsp;</span>
-                <apex:commandButton value="Next >" disabled="{!hasNext==false}" action="{!next}" reRender="pageMessages, pagination, orderItemTable" />
-                <span>&nbsp;&nbsp;</span>
-                <apex:commandButton value="Last >>" disabled="{!hasNext==false}" action="{!last}" reRender="pageMessages, pagination, orderItemTable" />
+                    <apex:commandButton value="<< First" disabled="{!hasPrevious==false}" action="{!first}" reRender="pageMessages, pagination, orderItemTable" />
+                    <span>&nbsp;&nbsp;</span>
+                    <apex:commandButton value="< Previous" disabled="{!hasPrevious==false}" action="{!previous}" reRender="pageMessages, pagination, orderItemTable" />
+                    <span>&nbsp;&nbsp;</span>
+                    <span>Page {!pageNumber} of {!totalPages}</span>
+                    <span>&nbsp;&nbsp;</span>
+                    <apex:commandButton value="Next >" disabled="{!hasNext==false}" action="{!next}" reRender="pageMessages, pagination, orderItemTable" />
+                    <span>&nbsp;&nbsp;</span>
+                    <apex:commandButton value="Last >>" disabled="{!hasNext==false}" action="{!last}" reRender="pageMessages, pagination, orderItemTable" />
                 </apex:panelGrid>
             </center>
         </apex:actionRegion>
