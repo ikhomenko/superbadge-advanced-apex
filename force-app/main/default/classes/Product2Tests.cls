@@ -12,6 +12,7 @@ private class Product2Tests {
             Product2Extension ext = new Product2Extension(new ApexPages.StandardController(new Product2()));
             System.assertEquals(Constants.DEFAULT_ROWS, ext.productsToInsert.size());
             ext.addRows();
+            System.debug(ext.productsToInsert.size());
             System.assertEquals(2*Constants.DEFAULT_ROWS, ext.productsToInsert.size());
             for (Product2Extension.ProductWrapper pw : ext.productsToInsert) {
                 pw.productRecord.Name = 'another product' + String.valueOf((Math.random() * 1000));
@@ -28,6 +29,27 @@ private class Product2Tests {
     }
 
     @isTest
-    static void Product2Trigger_UnitTest() {}
+    static void Product2Trigger_UnitTest() {
+        Test.startTest();
+            Product2 product = new Product2(
+                    Name = 'TEST',
+                    IsActive = true,
+                    Family = 'Side',
+                    Quantity_Ordered__c = Constants.DEFAULT_ROWS,
+                    Initial_Inventory__c = 10
+            );
+            insert product;
+
+            CollaborationGroup chatterGroup = new CollaborationGroup(
+                    Name = 'TEST' + Constants.INVENTORY_ANNOUNCEMENTS,
+                    CollaborationType = 'Public',
+                    Description = 'Announcement done'
+            );
+            insert chatterGroup;
+
+            product.Quantity_Ordered__c  =  10*Constants.DEFAULT_ROWS;
+            update product;
+        Test.stopTest();
+    }
 
 }

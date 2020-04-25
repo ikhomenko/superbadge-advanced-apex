@@ -2,7 +2,7 @@ public class OrderHelper {
 
     /**
      * @name AfterUpdate
-     * @description 
+     * @description
      * @param List<Order> newList
      * @param List<Order> oldList
      * @return void

@@ -36,7 +36,7 @@ public class Product2Helper {
         //      add it to the needsAnnouncement list
         List<Product2> lowInStockProducts = new List<Product2>();
         for (Product2 product : newList) {
-            if (product.Quantity_Remaining__c < invSettings.get(product.Family).Low_Quantity_Alert__c) {
+            if (product.Quantity_Remaining__c <= invSettings.get(product.Family).Low_Quantity_Alert__c) {
                 lowInStockProducts.add(product);
             }
         }

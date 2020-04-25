@@ -35,7 +35,7 @@ public with sharing class TestDataFactory {
                 IsActive =  true,
                 Initial_Inventory__c = 10,
                 Quantity_Ordered__c = 0,
-                Family = Constants.PRODUCT_FAMILY.size() <= i ? 'Any Family' : Constants.PRODUCT_FAMILY.get(i).getValue()
+                Family = Constants.PRODUCT_FAMILY.size() <= i ? 'Side' : Constants.PRODUCT_FAMILY.get(i).getValue()
             ));
         }
         return products;
@@ -55,7 +55,7 @@ public with sharing class TestDataFactory {
         for (Product2 product : prods) {
             pricebookEntries.add(new PricebookEntry(
                 Product2Id = product.Id,
-                Pricebook2Id  = Test.getStandardPricebookId(),
+                Pricebook2Id  = Test.isRunningTest() ? Test.getStandardPricebookId() : Constants.STANDARD_PRICEBOOK_ID,
                 IsActive = true,
                 UnitPrice = 100
             ));
@@ -109,7 +109,7 @@ public with sharing class TestDataFactory {
         for (Integer i = 0; i < cnt; i++) {
             orders.add(new Order(
                 AccountId = accts.size() <= i ? accts.get(0).Id : accts.get(i).Id,
-                Pricebook2Id = Test.getStandardPricebookId(),
+                Pricebook2Id = Test.isRunningTest() ? Test.getStandardPricebookId() : Constants.STANDARD_PRICEBOOK_ID,
                 Status = 'Draft',
                 EffectiveDate = Date.today()
             ));

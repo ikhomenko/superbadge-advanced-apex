@@ -22,6 +22,28 @@ private class OrderTests {
     }
 
     @isTest
-    static void OrderExtension_UnitTest() {}
+    static void OrderExtension_UnitTest() {
+        Test.setCurrentPage(Page.OrderEdit);
+        Test.startTest();
+            Order order = [Select Id,Status from Order limit 1];
+            ApexPages.StandardController controller = new Apexpages.StandardController(order);
+            OrderExtension ext = new OrderExtension(controller);
+            System.assertEquals(5, ext.orderItemList.size());
+            ext.selectedFamily = 'Dessert';
+            ext.SelectFamily();
+            ext.OnFieldChange();
+            ext.First();
+            ext.Next();
+            ext.Previous();
+            ext.Last();
+            ext.GetHasNext();
+            ext.GetPageNumber();
+            ext.GetHasPrevious();
+            ext.GetTotalPages();
+            ext.GetFamilyOptions();
+            ext.Save();
+            ChartHelper.GetInventory();
+        Test.stopTest();
+    }
 
 }

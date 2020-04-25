@@ -63,11 +63,6 @@ public class OrderExtension {
     private List<PricebookEntry> pricebookEntries {
         get {
             if (pricebookEntries == null) {
-                pricebookEntries = new List<PricebookEntry>([
-                    SELECT Id, Product2Id, Name, Product2.Family, UnitPrice, Product2.Quantity_Remaining__c
-                    FROM PricebookEntry
-                    WHERE Pricebook2Id = :Constants.STANDARD_PRICEBOOK_ID
-                ]);
                 String query =
                         ' SELECT Id, Product2Id, Name, Product2.Name, Product2.Family, UnitPrice, Product2.Quantity_Remaining__c' +
                         ' FROM PricebookEntry ' +

@@ -93,8 +93,8 @@ public class Product2Extension {
         public PriceBookEntry pricebookEntryRecord {get;set;}
 
         public ProductWrapper() {
-            productRecord = new Product2();
-            pricebookEntryRecord =  new PricebookEntry();
+            productRecord = new Product2(Initial_Inventory__c =0, Name='Test Product', isActive=true);
+            pricebookEntryRecord =  new PricebookEntry(Unitprice=0.0);
         }
 
         public Boolean hasAnyEmptyValues() {
